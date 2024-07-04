@@ -1,27 +1,27 @@
 from argparse import ArgumentParser
-from flask import Flask, request, render_template_string
+from fastapi import FastAPI, Request, Form
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
+
 from . import __version__
 
 __all__ = ["main"]
-
-app = Flask(__name__)
-
-@app.route('/')
-def hello_world():
-    return render_template_string('<h1>Hello, World!</h1>')
-
-@app.route('/post', methods=['POST'])
-def simple_post():
-    data = request.form.get('data', 'No data provided')
-    return f'Received data: {data}'
 
 def main(args=None):
     parser = ArgumentParser()
     parser.add_argument("-v", "--version", action="version", version=__version__)
     args = parser.parse_args(args)
 
-    # Run the Flask app
-    app.run()
+app = FastAPI()
+templates = Jinja2Templates(directory="templates")
+
+@app.get("/", response_class=HTMLResponse)
+async def read_root(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+@app.post("/submit/")
+async def submit_data(name: str = Form(...)):
+    return {"message": f"Hello, {name}"}
 
 # test with: python -m {{package_name}}
 if __name__ == "__main__":
