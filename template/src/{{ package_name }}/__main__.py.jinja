@@ -1,15 +1,27 @@
 from argparse import ArgumentParser
-
+from flask import Flask, request, render_template_string
 from . import __version__
 
 __all__ = ["main"]
 
+app = Flask(__name__)
+
+@app.route('/')
+def hello_world():
+    return render_template_string('<h1>Hello, World!</h1>')
+
+@app.route('/post', methods=['POST'])
+def simple_post():
+    data = request.form.get('data', 'No data provided')
+    return f'Received data: {data}'
 
 def main(args=None):
     parser = ArgumentParser()
     parser.add_argument("-v", "--version", action="version", version=__version__)
     args = parser.parse_args(args)
 
+    # Run the Flask app
+    app.run()
 
 # test with: python -m {{package_name}}
 if __name__ == "__main__":
