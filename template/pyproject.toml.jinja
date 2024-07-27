@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=64", "setuptools_scm[toml]>=6.2"]
+requires = ["setuptools>=64", "setuptools_scm[toml]>=8"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -49,7 +49,7 @@ name = "{{ author_name }}"
 
 
 [tool.setuptools_scm]
-write_to = "src/{{ package_name }}/_version.py"
+version_file = "src/{{ package_name }}/_version.py"
 {% if type_checker=="pyright" %}
 [tool.pyright]
 reportMissingImports = false # Ignore missing stubs in imported modules
@@ -109,4 +109,14 @@ lint.select = [
     "W",  # pycodestyle warnings - https://docs.astral.sh/ruff/rules/#warning-w
     "I",  # isort - https://docs.astral.sh/ruff/rules/#isort-i
     "UP", # pyupgrade - https://docs.astral.sh/ruff/rules/#pyupgrade-up
+    "SLF", # self - https://docs.astral.sh/ruff/settings/#lintflake8-self
 ]
+
+
+[tool.ruff.lint.per-file-ignores]
+# By default, private member access is allowed in tests
+# See https://github.com/DiamondLightSource/python-copier-template/issues/154
+# Remove this line to forbid private member access in tests
+"tests/**/*" = ["SLF001"]
+
+
